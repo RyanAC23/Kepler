@@ -24,3 +24,7 @@ envs/
 # LaTeX build files
 *.aux
 *.log
+
+# Emacs temp files
+\#*\#
+.\#*

@@ -1,4 +1,7 @@
-from planets import *
+import mmf_setup
+
+mmf_setup.set_path()
+from kepler.planets import *
 
 semimajor_axis = {
     "Mercury": 0.3871,

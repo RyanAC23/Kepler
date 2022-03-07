@@ -4,8 +4,12 @@ from matplotlib import animation
 import numpy as np
 from scipy.optimize import curve_fit
 
-from ivp_evolvers import Orbits
-from planets import Mercury
+import mmf_setup
+
+mmf_setup.set_path()
+
+from evolvers.ivp_evolvers import Orbits
+from kepler.planets import Mercury
 
 eps = np.finfo(float).eps
 

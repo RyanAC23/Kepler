@@ -3,11 +3,13 @@
 from matplotlib import pyplot as plt
 from matplotlib import animation
 
-from ivp_evolvers import Orbits
+import mmf_setup
 
-from planets import *
+mmf_setup.set_path()
 
-from planets import Planet
+from evolvers.ivp_evolvers import Orbits
+from kepler.planets import *
+from kepler.planets import Planet
 
 # ----- Class Call --------------------------
 

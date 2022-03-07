@@ -3,8 +3,12 @@
 from matplotlib import pyplot as plt
 from matplotlib import animation
 
-from ivp_evolvers import Orbits
-from planets import HalleysComet
+import mmf_setup
+
+mmf_setup.set_path()
+
+from evolvers.ivp_evolvers import Orbits
+from kepler.planets import HalleysComet
 
 
 MyPlanet = HalleysComet
