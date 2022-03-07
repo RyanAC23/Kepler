@@ -1,0 +1,26 @@
+syntax:glob
+.git
+.hg
+
+# Python files
+*.py[ocd]
+.pytest_cache/
+__pycache__
+.ipynb_checkpoints/
+*.ipynb
+*.sage-jupyter2
+*.term
+
+.venv/
+.coverage
+
+# Special directories
+_data/
+_ext/
+_trash/
+_htmlcov/
+envs/
+
+# LaTeX build files
+*.aux
+*.log
