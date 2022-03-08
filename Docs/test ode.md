@@ -1,32 +1,37 @@
-# ---
-# jupyter:
-#   jupytext:
-#     formats: ipynb,py:light
-#     text_representation:
-#       extension: .py
-#       format_name: light
-#       format_version: '1.5'
-#       jupytext_version: 1.3.3
-#   kernelspec:
-#     display_name: Python [conda env:python3]
-#     language: python
-#     name: conda-env-python3-py
-# ---
+---
+jupyter:
+  jupytext:
+    formats: ipynb,py:light,md
+    text_representation:
+      extension: .md
+      format_name: markdown
+      format_version: '1.2'
+      jupytext_version: 1.3.3
+  kernelspec:
+    display_name: Python [conda env:work]
+    language: python
+    name: conda-env-work-py
+---
 
-# + [markdown] toc=true
-# <h1>Table of Contents<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#Variations-of-Finite-Difference" data-toc-modified-id="Variations-of-Finite-Difference-1">Variations of Finite Difference</a></span><ul class="toc-item"><li><span><a href="#Euler-Method" data-toc-modified-id="Euler-Method-1.1">Euler Method</a></span></li><li><span><a href="#Runge-Kutta-2nd-Order" data-toc-modified-id="Runge-Kutta-2nd-Order-1.2">Runge-Kutta 2nd Order</a></span></li><li><span><a href="#Runge-Kutta-4th-Order" data-toc-modified-id="Runge-Kutta-4th-Order-1.3">Runge-Kutta 4th Order</a></span><ul class="toc-item"><li><span><a href="#Ex.-Decay" data-toc-modified-id="Ex.-Decay-1.3.1">Ex. Decay</a></span></li><li><span><a href="#Ex.-2nd-order" data-toc-modified-id="Ex.-2nd-order-1.3.2">Ex. 2nd order</a></span></li></ul></li></ul></li></ul></div>
-# -
+<!-- #region toc=true -->
+<h1>Table of Contents<span class="tocSkip"></span></h1>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Variations-of-Finite-Difference" data-toc-modified-id="Variations-of-Finite-Difference-1">Variations of Finite Difference</a></span><ul class="toc-item"><li><span><a href="#Euler-Method" data-toc-modified-id="Euler-Method-1.1">Euler Method</a></span></li><li><span><a href="#Runge-Kutta-2nd-Order" data-toc-modified-id="Runge-Kutta-2nd-Order-1.2">Runge-Kutta 2nd Order</a></span></li><li><span><a href="#Runge-Kutta-4th-Order" data-toc-modified-id="Runge-Kutta-4th-Order-1.3">Runge-Kutta 4th Order</a></span><ul class="toc-item"><li><span><a href="#Ex.-Decay" data-toc-modified-id="Ex.-Decay-1.3.1">Ex. Decay</a></span></li><li><span><a href="#Ex.-2nd-order" data-toc-modified-id="Ex.-2nd-order-1.3.2">Ex. 2nd order</a></span></li></ul></li></ul></li></ul></div>
+<!-- #endregion -->
 
-# # Variations of Finite Difference
-
-# ## Euler Method
-
-# $$y_{n+1} = y_n + h f(x_n, y_n) $$
-
-# %pylab inline --no-import-all
+# Variations of Finite Difference
 
 
+## Euler Method
+
+
+$$y_{n+1} = y_n + h f(x_n, y_n) $$
+
+```python
+%pylab inline --no-import-all
+```
+
+
+```python
 def euler(f, x0, t0, tf, N):
     h = (tf - t0) / N
     xs = [0]
@@ -45,15 +50,18 @@ def euler(f, x0, t0, tf, N):
         del x_temp
 
     return ts, xs
+```
 
-
+```python
 def f(x, t):
     return t ** 3 + t ** 2 + t + 100
+```
 
 
-# ## Runge-Kutta 2nd Order
+## Runge-Kutta 2nd Order
 
 
+```python
 def rk2(f, x0, t0, tf, N):
     h = (tf - t0) / N
     xs = [0]
@@ -73,11 +81,13 @@ def rk2(f, x0, t0, tf, N):
         del x_temp, k
 
     return ts, xs
+```
 
 
-# ## Runge-Kutta 4th Order
+## Runge-Kutta 4th Order
 
 
+```python
 def rk4(f, x0, t0, tf, N):
     h = (tf - t0) / N
     xs = [0]
@@ -99,9 +109,9 @@ def rk4(f, x0, t0, tf, N):
         del x_temp, k
 
     return ts, xs
+```
 
-
-# +
+```python
 plt.figure(figsize=(10, 10))
 ts, xs = euler(f, 0, -10, 10, 10)
 # have to take much smaller step size with euler to make it match
@@ -117,26 +127,25 @@ plt.xlabel("ts")
 plt.ylabel("xs")
 
 plt.plot(ts, f(xs, ts))
+```
+
+### Ex. Decay
+$$\frac{dN}{dt} = -\frac{N}{\tau}$$
+
+$$\int_{N_0}^{y}\frac{dN}{N} =\int_{t=0}^{t} -\frac{dt}{\tau}$$
+
+$$ ln\bigg(\frac{N}{N_0}\bigg) = -\frac{t}{\tau}$$
+
+$$ N(t) = N_0 e^{-t / \tau} $$
 
 
-# -
-
-# ### Ex. Decay
-# $$\frac{dN}{dt} = -\frac{N}{\tau}$$
-#
-# $$\int_{N_0}^{y}\frac{dN}{N} =\int_{t=0}^{t} -\frac{dt}{\tau}$$
-#
-# $$ ln\bigg(\frac{N}{N_0}\bigg) = -\frac{t}{\tau}$$
-#
-# $$ N(t) = N_0 e^{-t / \tau} $$
-
-
+```python
 def dNdt(N, t):
     tau = 2.0
     return -N / tau
+```
 
-
-# +
+```python
 ts, Ns = euler(dNdt, 100, 0, 10, 10)
 ts2, Ns2 = rk2(dNdt, 100, 0, 10, 10)
 ts4, Ns4 = rk4(dNdt, 100, 0, 10, 10)
@@ -158,19 +167,24 @@ plt.ylabel("number of particles")
 #    return Ns
 # N_analytics = N_analytic(ts)
 # plt.plot(ts, N_analytics)
-# -
+```
 
-# ### Ex. 2nd order
+### Ex. 2nd order
 
 
+```python
 def ddt(q, t):
     x, dx = q
     ddx = a = -9.81
     dx = v = a * t
     dq = (dx, ddx)
     return dq
+```
 
+```python
+%debug
+```
 
-# %debug
-
+```python
 ts, dxs = euler(f=ddt, x0=[10, 0], t0=0, tf=10, N=100)
+```

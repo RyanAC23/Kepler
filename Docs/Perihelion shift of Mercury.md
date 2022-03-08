@@ -1,19 +1,19 @@
-# ---
-# jupyter:
-#   jupytext:
-#     formats: ipynb,py:light
-#     text_representation:
-#       extension: .py
-#       format_name: light
-#       format_version: '1.5'
-#       jupytext_version: 1.3.3
-#   kernelspec:
-#     display_name: Python [conda env:work]
-#     language: python
-#     name: conda-env-work-py
-# ---
+---
+jupyter:
+  jupytext:
+    formats: ipynb,py:light,md
+    text_representation:
+      extension: .md
+      format_name: markdown
+      format_version: '1.2'
+      jupytext_version: 1.3.3
+  kernelspec:
+    display_name: Python [conda env:work]
+    language: python
+    name: conda-env-work-py
+---
 
-# +
+```python
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
@@ -22,13 +22,13 @@ from planets import Mercury
 from ivp_evolvers import Orbits
 
 eps = np.finfo(float).eps
-# -
+```
 
-# # Mercury
-#
-# Here I'll take a look at Mercury, which has a noticeable eccentricity, though less extreme than Halley's Comet. In the real world, this orbit precesses, but in simulation it will not. Why the difference?
+# Mercury
 
-# +
+Here I'll take a look at Mercury, which has a noticeable eccentricity, though less extreme than Halley's Comet. In the real world, this orbit precesses, but in simulation it will not. Why the difference?
+
+```python
 MyPlanet = Mercury
 
 c = Orbits(planet=MyPlanet, dt=0.0001, Tmax=1.5 * getattr(MyPlanet(), "period"))
@@ -53,12 +53,12 @@ for i in range(len(c.data[::frames])):
 
     display(fig)
     clear_output(wait=True)
-# -
+```
 
-# ## Deviation from $1/r^2$
-# In our universe, there are more gravitating bodies than just the sun and Mercury. The contributions to the gravitational force from these other bodies act as a perturbation on Mercury's orbit and cause it to precess. One way of roughly modelling this is by slightly deviating from the $1/r^2$ force.
+## Deviation from $1/r^2$
+In our universe, there are more gravitating bodies than just the sun and Mercury. The contributions to the gravitational force from these other bodies act as a perturbation on Mercury's orbit and cause it to precess. One way of roughly modelling this is by slightly deviating from the $1/r^2$ force.
 
-# +
+```python
 MyPlanet = Mercury
 
 c = Orbits(
@@ -85,19 +85,18 @@ for i in range(len(c.data[::frames])):
 
     display(fig)
     clear_output(wait=True)
+```
+
+# Measuring the perihelion shift
+
+$$
+\frac{\partial^2 r}{\partial t^2} = \frac{k}{r^2}\bigg( 1 + \frac{\alpha}{r^2}\bigg)
+$$
+
+A quick note - the aphelion could have been used as easily as the perihelion, right? Not quite. Since the precession (the way the problem has been defined) proceeds counter-clockwise, the angle of perihelion should be increasing in time. Since $\arccos$ has a range of $[0,\pi]$, if the angle is more than $\pi$, the arguments of $\arccos$ will give the angle as reflected across the x-axis. So instead of $\pi + \delta$, we would measure $\pi - \delta$ rad. This problem goes away if we use the perihelion, which starts at angle $0$ rad.
 
 
-# -
-
-# # Measuring the perihelion shift
-#
-# $$
-# \frac{\partial^2 r}{\partial t^2} = \frac{k}{r^2}\bigg( 1 + \frac{\alpha}{r^2}\bigg)
-# $$
-#
-# A quick note - the aphelion could have been used as easily as the perihelion, right? Not quite. Since the precession (the way the problem has been defined) proceeds counter-clockwise, the angle of perihelion should be increasing in time. Since $\arccos$ has a range of $[0,\pi]$, if the angle is more than $\pi$, the arguments of $\arccos$ will give the angle as reflected across the x-axis. So instead of $\pi + \delta$, we would measure $\pi - \delta$ rad. This problem goes away if we use the perihelion, which starts at angle $0$ rad.
-
-
+```python
 class RelativisticCorrection(Orbits):
     def __init__(self, alpha=0, **kw):
         self.alpha = alpha
@@ -125,11 +124,11 @@ class RelativisticCorrection(Orbits):
 
         # return E.ravel()
         return np.array([E, KE])[:, :, -1]
+```
 
+## Precession rate curve fit test
 
-# ## Precession rate curve fit test
-
-# +
+```python
 alphas = [6e-3, 5e-3, 3e-3, 1e-3, 5e-4]
 alphas = [alphas[-1]]
 precession_rates = []
@@ -163,8 +162,9 @@ for i in range(len(alphas)):
         func, fit_times, fit_angles, bounds=((-np.inf, 0), (np.inf, 0.00000001))
     )
     precession_rates.append(popt[0])
+```
 
-# +
+```python
 do_static_plots = True
 
 fit_locations = abs(c.data[peaks]).ravel()
@@ -191,14 +191,14 @@ if do_static_plots:
     plt.subplot(223)
     plt.plot(c.ts, abs(c.data))
     plt.plot(c.ts[peaks], fit_locations, ".")
-# -
+```
 
-# ## Extrapolate precession from changing $\alpha$
-# The above appears to have given a perihelion shift. We now repeat this for many values of $\alpha$, and curve-fit the resulting $\omega$ vs $\alpha$ plot to extrapolate the real value.
-#
-# Watch out for values of alpha that are too large.
+## Extrapolate precession from changing $\alpha$
+The above appears to have given a perihelion shift. We now repeat this for many values of $\alpha$, and curve-fit the resulting $\omega$ vs $\alpha$ plot to extrapolate the real value.
 
-# +
+Watch out for values of alpha that are too large.
+
+```python
 # alphas = [1e-4, 5e-5, 1e-4, 5e-4, 1e-3, 2e-3, 3e-3, 4e-3]
 
 a = np.linspace(1e-4, 9e-4, 9)
@@ -240,8 +240,9 @@ for i in range(len(alphas)):
     precession_rates.append(popt[0])
 
     print(popt)
+```
 
-# +
+```python
 precession_rates_degrees = np.array(precession_rates) * 180 / np.pi
 
 
@@ -268,3 +269,4 @@ mercury_precession_rate = (
     func(mercury_alpha, popt_final[0], 0) * 3600 * 100
 )  # arcseconds / century
 print(f"Mercury's Precession Rate : {mercury_precession_rate:.2f} arcseconds / century")
+```
