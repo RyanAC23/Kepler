@@ -18,8 +18,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
 
-from planets import Mercury
-from ivp_evolvers import Orbits
+import mmf_setup; mmf_setup.set_path()
+
+from kepler.planets import Mercury
+from evolvers.ivp_evolvers import Orbits
 
 eps = np.finfo(float).eps
 ```
