@@ -2,7 +2,7 @@
 # https://github.com/simoninireland/introduction-to-epidemics/blob/master/Makefile
 SHELL = /bin/bash
 
-RESOURCES = None
+RESOURCES =
 
 
 ACTIVATE ?= eval "$$(conda shell.bash hook)" && conda activate
@@ -34,7 +34,7 @@ _init:
 
 _ext/Resources:
 	-git clone $(RESOURCES) $@
-	@if [ ! -d "$@" ]; then \
+	@if [ ! -d "$@" && $(RESOURCES) ]; then \
 	  echo "$$RESOURCES_ERROR_MESSAGE"; \
 	fi
 

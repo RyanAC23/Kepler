@@ -1,0 +1,348 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mercury &#8212; kepler 0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/traditional.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">kepler 0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Mercury</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
+
+<span class="kn">import</span> <span class="nn">mmf_setup</span><span class="p">;</span> <span class="n">mmf_setup</span><span class="o">.</span><span class="n">set_path</span><span class="p">()</span>
+
+<span class="kn">from</span> <span class="nn">kepler.planets</span> <span class="kn">import</span> <span class="n">Mercury</span>
+<span class="kn">from</span> <span class="nn">evolvers.ivp_evolvers</span> <span class="kn">import</span> <span class="n">Orbits</span>
+
+<span class="n">eps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+</pre></div>
+</div>
+<div class="tex2jax_ignore mathjax_ignore section" id="mercury">
+<h1>Mercury<a class="headerlink" href="#mercury" title="Permalink to this headline">¶</a></h1>
+<p>Here I’ll take a look at Mercury, which has a noticeable eccentricity, though less extreme than Halley’s Comet. In the real world, this orbit precesses, but in simulation it will not. Why the difference?</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MyPlanet</span> <span class="o">=</span> <span class="n">Mercury</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">Orbits</span><span class="p">(</span><span class="n">planet</span><span class="o">=</span><span class="n">MyPlanet</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mf">1.5</span> <span class="o">*</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">MyPlanet</span><span class="p">(),</span> <span class="s2">&quot;period&quot;</span><span class="p">))</span>
+
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">clear_output</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;distance (AU)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;distance (AU)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Mercury&#39;s Orbit&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">(</span><span class="n">line</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">(</span><span class="n">points</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="s2">&quot;mo&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+
+<span class="n">frames</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">[::</span><span class="n">frames</span><span class="p">])):</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">frames</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">real</span><span class="p">[:</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">imag</span><span class="p">[:</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">line</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">points</span><span class="o">.</span><span class="n">set_data</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">real</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">imag</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+
+    <span class="n">display</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+    <span class="n">clear_output</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="deviation-from-1-r-2">
+<h2>Deviation from <span class="math notranslate nohighlight">\(1/r^2\)</span><a class="headerlink" href="#deviation-from-1-r-2" title="Permalink to this headline">¶</a></h2>
+<p>In our universe, there are more gravitating bodies than just the sun and Mercury. The contributions to the gravitational force from these other bodies act as a perturbation on Mercury’s orbit and cause it to precess. One way of roughly modelling this is by slightly deviating from the <span class="math notranslate nohighlight">\(1/r^2\)</span> force.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MyPlanet</span> <span class="o">=</span> <span class="n">Mercury</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">Orbits</span><span class="p">(</span>
+    <span class="n">planet</span><span class="o">=</span><span class="n">MyPlanet</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">MyPlanet</span><span class="p">(),</span> <span class="s2">&quot;period&quot;</span><span class="p">),</span> <span class="n">exponent</span><span class="o">=</span><span class="mf">2.2</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">clear_output</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;distance (AU)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;distance (AU)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;Mercury&#39;s Orbit, $\beta$=</span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">exponent</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">),</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">),</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">(</span><span class="n">line</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">(</span><span class="n">points</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="s2">&quot;mo&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+
+<span class="n">frames</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">[::</span><span class="n">frames</span><span class="p">])):</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">frames</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">real</span><span class="p">[:</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">imag</span><span class="p">[:</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">line</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">points</span><span class="o">.</span><span class="n">set_data</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">real</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">imag</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+
+    <span class="n">display</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+    <span class="n">clear_output</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tex2jax_ignore mathjax_ignore section" id="measuring-the-perihelion-shift">
+<h1>Measuring the perihelion shift<a class="headerlink" href="#measuring-the-perihelion-shift" title="Permalink to this headline">¶</a></h1>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial^2 r}{\partial t^2} = \frac{k}{r^2}\bigg( 1 + \frac{\alpha}{r^2}\bigg)
+\]</div>
+<p>A quick note - the aphelion could have been used as easily as the perihelion, right? Not quite. Since the precession (the way the problem has been defined) proceeds counter-clockwise, the angle of perihelion should be increasing in time. Since <span class="math notranslate nohighlight">\(\arccos\)</span> has a range of <span class="math notranslate nohighlight">\([0,\pi]\)</span>, if the angle is more than <span class="math notranslate nohighlight">\(\pi\)</span>, the arguments of <span class="math notranslate nohighlight">\(\arccos\)</span> will give the angle as reflected across the x-axis. So instead of <span class="math notranslate nohighlight">\(\pi + \delta\)</span>, we would measure <span class="math notranslate nohighlight">\(\pi - \delta\)</span> rad. This problem goes away if we use the perihelion, which starts at angle <span class="math notranslate nohighlight">\(0\)</span> rad.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RelativisticCorrection</span><span class="p">(</span><span class="n">Orbits</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">dq_dt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the rhs of the differential equation to integrate.&quot;&quot;&quot;</span>
+        <span class="n">_x</span><span class="p">,</span> <span class="n">dx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+
+        <span class="c1"># Calculate r^2 with absolute value</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">_x</span><span class="p">)</span>
+        <span class="n">ddx</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">_x</span> <span class="o">/</span> <span class="n">r</span> <span class="o">**</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exponent</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">/</span> <span class="n">r</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">ddx</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate the energy for a 1/r^2 orbit. Returns [E, KE] as an array.</span>
+
+<span class="sd">        Note that this will need to be overridden or recomputed when</span>
+<span class="sd">        changing \beta.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">KE</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vs</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">PE</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">KE</span> <span class="o">+</span> <span class="n">PE</span>
+
+        <span class="c1"># return E.ravel()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">E</span><span class="p">,</span> <span class="n">KE</span><span class="p">])[:,</span> <span class="p">:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="section" id="precession-rate-curve-fit-test">
+<h2>Precession rate curve fit test<a class="headerlink" href="#precession-rate-curve-fit-test" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">alphas</span> <span class="o">=</span> <span class="p">[</span><span class="mf">6e-3</span><span class="p">,</span> <span class="mf">5e-3</span><span class="p">,</span> <span class="mf">3e-3</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">5e-4</span><span class="p">]</span>
+<span class="n">alphas</span> <span class="o">=</span> <span class="p">[</span><span class="n">alphas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+<span class="n">precession_rates</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="n">b</span>
+
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">alphas</span><span class="p">)):</span>
+
+    <span class="n">MyPlanet</span> <span class="o">=</span> <span class="n">Mercury</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">RelativisticCorrection</span><span class="p">(</span>
+        <span class="n">planet</span><span class="o">=</span><span class="n">MyPlanet</span><span class="p">,</span>
+        <span class="n">dt</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
+        <span class="n">Tmax</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">MyPlanet</span><span class="p">(),</span> <span class="s2">&quot;period&quot;</span><span class="p">),</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="n">alphas</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="n">peaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">fit_times</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">ts</span><span class="p">[</span><span class="n">peaks</span><span class="p">]</span>
+    <span class="n">fit_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">peaks</span><span class="p">]</span><span class="o">.</span><span class="n">real</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">peaks</span><span class="p">]))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+    <span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span>
+        <span class="n">func</span><span class="p">,</span> <span class="n">fit_times</span><span class="p">,</span> <span class="n">fit_angles</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">((</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="mf">0.00000001</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="n">precession_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">do_static_plots</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="n">fit_locations</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">peaks</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="n">fit_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">peaks</span><span class="p">]</span><span class="o">.</span><span class="n">real</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">peaks</span><span class="p">]))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">do_static_plots</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">221</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fit_times</span><span class="p">,</span> <span class="n">fit_angles</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fit_times</span><span class="p">,</span> <span class="n">func</span><span class="p">(</span><span class="n">fit_times</span><span class="p">,</span> <span class="o">*</span><span class="n">popt</span><span class="p">),</span> <span class="s2">&quot;--&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;angle of perihelion vs time, $\dot\theta$=</span><span class="si">{</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> rad / yr&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;time (years)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Angle of max radius&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">222</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;distance (x)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;distance (y)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;Precession of Mercury, $\alpha$ = </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">alpha</span><span class="si">:</span><span class="s2">.1e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Orbital shift&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">223</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">ts</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">ts</span><span class="p">[</span><span class="n">peaks</span><span class="p">],</span> <span class="n">fit_locations</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="extrapolate-precession-from-changing-alpha">
+<h2>Extrapolate precession from changing <span class="math notranslate nohighlight">\(\alpha\)</span><a class="headerlink" href="#extrapolate-precession-from-changing-alpha" title="Permalink to this headline">¶</a></h2>
+<p>The above appears to have given a perihelion shift. We now repeat this for many values of <span class="math notranslate nohighlight">\(\alpha\)</span>, and curve-fit the resulting <span class="math notranslate nohighlight">\(\omega\)</span> vs <span class="math notranslate nohighlight">\(\alpha\)</span> plot to extrapolate the real value.</p>
+<p>Watch out for values of alpha that are too large.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># alphas = [1e-4, 5e-5, 1e-4, 5e-4, 1e-3, 2e-3, 3e-3, 4e-3]</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1e-4</span><span class="p">,</span> <span class="mf">9e-4</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">4e-3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">alphas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">])</span>
+
+<span class="n">precession_rates</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="n">b</span>
+
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">alphas</span><span class="p">)):</span>
+
+    <span class="n">MyPlanet</span> <span class="o">=</span> <span class="n">Mercury</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">RelativisticCorrection</span><span class="p">(</span>
+        <span class="n">planet</span><span class="o">=</span><span class="n">MyPlanet</span><span class="p">,</span>
+        <span class="n">dt</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+        <span class="n">Tmax</span><span class="o">=</span><span class="mi">20</span> <span class="o">*</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">MyPlanet</span><span class="p">(),</span> <span class="s2">&quot;period&quot;</span><span class="p">),</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="n">alphas</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="n">peaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">fit_times</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">ts</span><span class="p">[</span><span class="n">peaks</span><span class="p">]</span>
+    <span class="n">fit_locations</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">peaks</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">fit_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">peaks</span><span class="p">]</span><span class="o">.</span><span class="n">real</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">peaks</span><span class="p">]))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+    <span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span>
+        <span class="n">func</span><span class="p">,</span> <span class="n">fit_times</span><span class="p">,</span> <span class="n">fit_angles</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">((</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">eps</span><span class="p">))</span>
+    <span class="p">)</span>
+
+    <span class="n">precession_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">popt</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">precession_rates_degrees</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">precession_rates</span><span class="p">)</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+
+
+<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="n">b</span>
+
+
+<span class="n">popt_final</span><span class="p">,</span> <span class="n">pcov_final</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span>
+    <span class="n">func</span><span class="p">,</span> <span class="n">alphas</span><span class="p">,</span> <span class="n">precession_rates_degrees</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">((</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">eps</span><span class="p">))</span>
+<span class="p">)</span>
+
+<span class="n">_alphas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">alphas</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">alphas</span><span class="p">,</span> <span class="n">precession_rates_degrees</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">alphas</span><span class="p">,</span> <span class="n">func</span><span class="p">(</span><span class="n">_alphas</span><span class="p">,</span> <span class="o">*</span><span class="n">popt_final</span><span class="p">),</span> <span class="s2">&quot;--&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\alpha$&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\omega$ (rad / year)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="sa">fr</span><span class="s2">&quot;Precession rate vs $\alpha$: slope=</span><span class="si">{</span><span class="n">popt_final</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+
+<span class="n">mercury_alpha</span> <span class="o">=</span> <span class="mf">1.1e-8</span>  <span class="c1"># AU^2</span>
+<span class="n">mercury_precession_rate</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">func</span><span class="p">(</span><span class="n">mercury_alpha</span><span class="p">,</span> <span class="n">popt_final</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3600</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="p">)</span>  <span class="c1"># arcseconds / century</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mercury&#39;s Precession Rate : </span><span class="si">{</span><span class="n">mercury_precession_rate</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> arcseconds / century&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Mercury</a><ul>
+<li><a class="reference internal" href="#deviation-from-1-r-2">Deviation from <span class="math notranslate nohighlight">\(1/r^2\)</span></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#measuring-the-perihelion-shift">Measuring the perihelion shift</a><ul>
+<li><a class="reference internal" href="#precession-rate-curve-fit-test">Precession rate curve fit test</a></li>
+<li><a class="reference internal" href="#extrapolate-precession-from-changing-alpha">Extrapolate precession from changing <span class="math notranslate nohighlight">\(\alpha\)</span></a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Perihelion shift of Mercury.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">kepler 0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Mercury</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Ryan AC.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

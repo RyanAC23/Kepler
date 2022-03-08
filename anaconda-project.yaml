@@ -18,7 +18,7 @@ icon:
 #
 # Set a one-sentence-or-so 'description' key with project details
 #
-description: 'Simulate simple orbits of a gravitational problem.'
+description: Simulate simple orbits of a gravitational problem.
 
 #
 # In the commands section, list your runnable scripts, notebooks, and other code.
@@ -36,7 +36,8 @@ commands:
   # Needs to be explicitly called until we can run scripts on prepare
   # https://github.com/Anaconda-Platform/anaconda-project/issues/239
   init:
-    unix: python3 -m ipykernel install --user --name "kepler" --display-name "Python 3 (kepler)"
+    unix: python3 -m ipykernel install --user --name "kepler" --display-name "Python
+      3 (kepler)"
     env_spec: kepler
 
   clean:
@@ -79,44 +80,51 @@ downloads: {}
 
 # packages:
 dependencies:
-  - python=3.9
-  - anaconda-project>=0.10.1
+- python=3.9
+- anaconda-project>=0.10.1
 
   # To deal with error in XXXX setup command: use_2to3 is invalid when false
   # https://github.com/pypa/setuptools/issues/2775
-  - setuptools<58.0.2|>59
+- setuptools<58.0.2|>59
 
   # Core
-  - conda-forge::uncertainties
-  - scipy
-  - sympy
-  - pyfftw
-
-  # Data analysis
-  - numexpr
+- scipy
+- sympy
+- pyfftw
+- pandas
+- numexpr
 
   # Optimization
 
   # Plotting and visualization tools
-  - matplotlib
+- matplotlib
 
   # Testing
-  - pytest-cov
-  - pytest-flake8
-  - pytest-html
-  - pytest-xdist
-  - black
+- pytest-cov
+- pytest-flake8
+- pytest-html
+- pytest-xdist
+- black
 
   # Documentation
-  - jupytext
-  - conda-forge::jupyter_nbextensions_configurator
+- jupytext
+- conda-forge::uncertainties
+- conda-forge::jupyter_nbextensions_configurator
+- sphinx
+- conda-forge::myst-nb
+- conda-forge::sphinx-panels
+- conda-forge::sphinx-book-theme
+- conda-forge::sphinx-autobuild
 
   # Pip-only dependencies
-  - pip
-  - pip:
-    - mmf-setup
+- pip
+- pip:
+  - sphinxcontrib-zopeext
+  - sphinxcontrib-bibtex
+  - mmf-setup
+
 channels:
-  - defaults
+- defaults
 
 #
 # In the platforms section, list platforms the project should work on
