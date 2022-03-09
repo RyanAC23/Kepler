@@ -1,19 +1,18 @@
 ---
-jupyter:
-  jupytext:
-    formats: md,ipynb
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.13.7
-  kernelspec:
-    display_name: Python 3 (kepler)
-    language: python
-    name: kepler
+jupytext:
+  formats: ipynb,md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.13.7
+kernelspec:
+  display_name: Python 3 (kepler)
+  language: python
+  name: kepler
 ---
 
-```python
+```{code-cell} ipython3
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
@@ -30,7 +29,7 @@ eps = np.finfo(float).eps
 
 Here I'll take a look at Mercury, which has a noticeable eccentricity, though less extreme than Halley's Comet. In the real world, this orbit precesses, but in simulation it will not. Why the difference?
 
-```python
+```{code-cell} ipython3
 MyPlanet = Mercury
 
 c = Orbits(planet=MyPlanet, dt=0.0001, Tmax=1.5 * getattr(MyPlanet(), "period"))
@@ -60,7 +59,7 @@ for i in range(len(c.data[::frames])):
 ## Deviation from $1/r^2$
 In our universe, there are more gravitating bodies than just the sun and Mercury. The contributions to the gravitational force from these other bodies act as a perturbation on Mercury's orbit and cause it to precess. One way of roughly modelling this is by slightly deviating from the $1/r^2$ force.
 
-```python
+```{code-cell} ipython3
 MyPlanet = Mercury
 
 c = Orbits(
@@ -97,8 +96,7 @@ $$
 
 A quick note - the aphelion could have been used as easily as the perihelion, right? Not quite. Since the precession (the way the problem has been defined) proceeds counter-clockwise, the angle of perihelion should be increasing in time. Since $\arccos$ has a range of $[0,\pi]$, if the angle is more than $\pi$, the arguments of $\arccos$ will give the angle as reflected across the x-axis. So instead of $\pi + \delta$, we would measure $\pi - \delta$ rad. This problem goes away if we use the perihelion, which starts at angle $0$ rad.
 
-
-```python
+```{code-cell} ipython3
 class RelativisticCorrection(Orbits):
     def __init__(self, alpha=0, **kw):
         self.alpha = alpha
@@ -130,7 +128,7 @@ class RelativisticCorrection(Orbits):
 
 ## Precession rate curve fit test
 
-```python
+```{code-cell} ipython3
 alphas = [6e-3, 5e-3, 3e-3, 1e-3, 5e-4]
 alphas = [alphas[-1]]
 precession_rates = []
@@ -166,7 +164,7 @@ for i in range(len(alphas)):
     precession_rates.append(popt[0])
 ```
 
-```python
+```{code-cell} ipython3
 do_static_plots = True
 
 fit_locations = abs(c.data[peaks]).ravel()
@@ -200,7 +198,7 @@ The above appears to have given a perihelion shift. We now repeat this for many 
 
 Watch out for values of alpha that are too large.
 
-```python
+```{code-cell} ipython3
 # alphas = [1e-4, 5e-5, 1e-4, 5e-4, 1e-3, 2e-3, 3e-3, 4e-3]
 
 a = np.linspace(1e-4, 9e-4, 9)
@@ -244,7 +242,7 @@ for i in range(len(alphas)):
     print(popt)
 ```
 
-```python
+```{code-cell} ipython3
 precession_rates_degrees = np.array(precession_rates) * 180 / np.pi
 
 
@@ -273,10 +271,10 @@ mercury_precession_rate = (
 print(f"Mercury's Precession Rate : {mercury_precession_rate:.2f} arcseconds / century")
 ```
 
-```python
+```{code-cell} ipython3
 
 ```
 
-```python
+```{code-cell} ipython3
 
 ```

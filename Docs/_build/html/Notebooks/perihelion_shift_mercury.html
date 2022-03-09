@@ -51,7 +51,9 @@ $(document).ready(function() {
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+  <div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
 
@@ -63,10 +65,14 @@ $(document).ready(function() {
 <span class="n">eps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
 </pre></div>
 </div>
+</div>
+</div>
 <div class="tex2jax_ignore mathjax_ignore section" id="mercury">
 <h1>Mercury<a class="headerlink" href="#mercury" title="Permalink to this headline">¶</a></h1>
 <p>Here I’ll take a look at Mercury, which has a noticeable eccentricity, though less extreme than Halley’s Comet. In the real world, this orbit precesses, but in simulation it will not. Why the difference?</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MyPlanet</span> <span class="o">=</span> <span class="n">Mercury</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">MyPlanet</span> <span class="o">=</span> <span class="n">Mercury</span>
 
 <span class="n">c</span> <span class="o">=</span> <span class="n">Orbits</span><span class="p">(</span><span class="n">planet</span><span class="o">=</span><span class="n">MyPlanet</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mf">1.5</span> <span class="o">*</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">MyPlanet</span><span class="p">(),</span> <span class="s2">&quot;period&quot;</span><span class="p">))</span>
 
@@ -92,10 +98,17 @@ $(document).ready(function() {
     <span class="n">clear_output</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/perihelion_shift_mercury_2_0.png" src="../_images/perihelion_shift_mercury_2_0.png" />
+</div>
+</div>
 <div class="section" id="deviation-from-1-r-2">
 <h2>Deviation from <span class="math notranslate nohighlight">\(1/r^2\)</span><a class="headerlink" href="#deviation-from-1-r-2" title="Permalink to this headline">¶</a></h2>
 <p>In our universe, there are more gravitating bodies than just the sun and Mercury. The contributions to the gravitational force from these other bodies act as a perturbation on Mercury’s orbit and cause it to precess. One way of roughly modelling this is by slightly deviating from the <span class="math notranslate nohighlight">\(1/r^2\)</span> force.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MyPlanet</span> <span class="o">=</span> <span class="n">Mercury</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">MyPlanet</span> <span class="o">=</span> <span class="n">Mercury</span>
 
 <span class="n">c</span> <span class="o">=</span> <span class="n">Orbits</span><span class="p">(</span>
     <span class="n">planet</span><span class="o">=</span><span class="n">MyPlanet</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">MyPlanet</span><span class="p">(),</span> <span class="s2">&quot;period&quot;</span><span class="p">),</span> <span class="n">exponent</span><span class="o">=</span><span class="mf">2.2</span>
@@ -124,6 +137,11 @@ $(document).ready(function() {
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="../_images/perihelion_shift_mercury_4_0.png" src="../_images/perihelion_shift_mercury_4_0.png" />
+</div>
+</div>
+</div>
 </div>
 <div class="tex2jax_ignore mathjax_ignore section" id="measuring-the-perihelion-shift">
 <h1>Measuring the perihelion shift<a class="headerlink" href="#measuring-the-perihelion-shift" title="Permalink to this headline">¶</a></h1>
@@ -132,7 +150,9 @@ $(document).ready(function() {
 \frac{\partial^2 r}{\partial t^2} = \frac{k}{r^2}\bigg( 1 + \frac{\alpha}{r^2}\bigg)
 \]</div>
 <p>A quick note - the aphelion could have been used as easily as the perihelion, right? Not quite. Since the precession (the way the problem has been defined) proceeds counter-clockwise, the angle of perihelion should be increasing in time. Since <span class="math notranslate nohighlight">\(\arccos\)</span> has a range of <span class="math notranslate nohighlight">\([0,\pi]\)</span>, if the angle is more than <span class="math notranslate nohighlight">\(\pi\)</span>, the arguments of <span class="math notranslate nohighlight">\(\arccos\)</span> will give the angle as reflected across the x-axis. So instead of <span class="math notranslate nohighlight">\(\pi + \delta\)</span>, we would measure <span class="math notranslate nohighlight">\(\pi - \delta\)</span> rad. This problem goes away if we use the perihelion, which starts at angle <span class="math notranslate nohighlight">\(0\)</span> rad.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RelativisticCorrection</span><span class="p">(</span><span class="n">Orbits</span><span class="p">):</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RelativisticCorrection</span><span class="p">(</span><span class="n">Orbits</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
@@ -161,9 +181,13 @@ $(document).ready(function() {
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">E</span><span class="p">,</span> <span class="n">KE</span><span class="p">])[:,</span> <span class="p">:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 </div>
+</div>
+</div>
 <div class="section" id="precession-rate-curve-fit-test">
 <h2>Precession rate curve fit test<a class="headerlink" href="#precession-rate-curve-fit-test" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">alphas</span> <span class="o">=</span> <span class="p">[</span><span class="mf">6e-3</span><span class="p">,</span> <span class="mf">5e-3</span><span class="p">,</span> <span class="mf">3e-3</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">5e-4</span><span class="p">]</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">alphas</span> <span class="o">=</span> <span class="p">[</span><span class="mf">6e-3</span><span class="p">,</span> <span class="mf">5e-3</span><span class="p">,</span> <span class="mf">3e-3</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">5e-4</span><span class="p">]</span>
 <span class="n">alphas</span> <span class="o">=</span> <span class="p">[</span><span class="n">alphas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
 <span class="n">precession_rates</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -198,7 +222,11 @@ $(document).ready(function() {
     <span class="n">precession_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">do_static_plots</span> <span class="o">=</span> <span class="kc">True</span>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">do_static_plots</span> <span class="o">=</span> <span class="kc">True</span>
 
 <span class="n">fit_locations</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">peaks</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
 <span class="n">fit_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">peaks</span><span class="p">]</span><span class="o">.</span><span class="n">real</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">peaks</span><span class="p">]))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
@@ -227,11 +255,18 @@ $(document).ready(function() {
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="../_images/perihelion_shift_mercury_9_0.png" src="../_images/perihelion_shift_mercury_9_0.png" />
+</div>
+</div>
+</div>
 <div class="section" id="extrapolate-precession-from-changing-alpha">
 <h2>Extrapolate precession from changing <span class="math notranslate nohighlight">\(\alpha\)</span><a class="headerlink" href="#extrapolate-precession-from-changing-alpha" title="Permalink to this headline">¶</a></h2>
 <p>The above appears to have given a perihelion shift. We now repeat this for many values of <span class="math notranslate nohighlight">\(\alpha\)</span>, and curve-fit the resulting <span class="math notranslate nohighlight">\(\omega\)</span> vs <span class="math notranslate nohighlight">\(\alpha\)</span> plot to extrapolate the real value.</p>
 <p>Watch out for values of alpha that are too large.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># alphas = [1e-4, 5e-5, 1e-4, 5e-4, 1e-3, 2e-3, 3e-3, 4e-3]</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># alphas = [1e-4, 5e-5, 1e-4, 5e-4, 1e-3, 2e-3, 3e-3, 4e-3]</span>
 
 <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1e-4</span><span class="p">,</span> <span class="mf">9e-4</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
 <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">4e-3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
@@ -274,7 +309,52 @@ $(document).ready(function() {
     <span class="nb">print</span><span class="p">(</span><span class="n">popt</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">precession_rates_degrees</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">precession_rates</span><span class="p">)</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[7.33655085e-03 2.22044557e-16]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[2.50836827e-02 1.10964255e-22]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[4.41051510e-02 5.51545423e-23]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[6.22399007e-02 5.48081574e-23]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[8.02571348e-02 1.90251766e-24]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1.00351234e-01 5.21164481e-23]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1.19967057e-01 1.10615781e-16]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1.36437535e-01 8.35914166e-25]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1.59387537e-01 4.75807811e-23]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1.78926868e-01 2.92051631e-23]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[3.81403461e-01 2.34349038e-23]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[5.98086894e-01 2.09541622e-23]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[7.31944502e-01 1.60395566e-16]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">precession_rates_degrees</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">precession_rates</span><span class="p">)</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
 
 
 <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
@@ -302,11 +382,13 @@ $(document).ready(function() {
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mercury&#39;s Precession Rate : </span><span class="si">{</span><span class="n">mercury_precession_rate</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> arcseconds / century&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mercury&#39;s Precession Rate : 42.44 arcseconds / century
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
+<img alt="../_images/perihelion_shift_mercury_12_1.png" src="../_images/perihelion_shift_mercury_12_1.png" />
+</div>
 </div>
 </div>
 </div>

@@ -1,18 +1,9 @@
----
-jupytext:
-  formats: ipynb,md:myst
-  text_representation:
-    extension: .md
-    format_name: myst
-    format_version: 0.13
-    jupytext_version: 1.13.7
-kernelspec:
-  display_name: Python 3 (kepler)
-  language: python
-  name: kepler
----
+#!/usr/bin/env python
+# coding: utf-8
 
-```{code-cell} ipython3
+# In[1]:
+
+
 import warnings
 
 import numpy as np
@@ -21,64 +12,62 @@ from scipy.optimize import curve_fit
 
 from matplotlib import pyplot as plt
 from matplotlib import animation
-```
 
-# Simple Keplerian Orbits
 
-+++
+# # Simple Keplerian Orbits
 
-## Equations of motion
+# ## Equations of motion
+# 
+# For an inverse square attractive potential, the energy takes the form
+# 
+# $$
+# E = \frac{1}{2} m v^2 - \frac{km}{r} \qquad k \equiv GM
+# $$
+# 
+# In the reduced mass picture,
+# 
+# $$
+# r = |\vec{r_1} - \vec{r_2}| \qquad \frac{m_1 m_2}{m_1 + m_2} = \mu = m
+# $$
+# 
+# Since for most of the work in this notebook the larger planet's mass (i.e., the sun) is hidden in the coupling constant $k$, I won't make an effort to use $\mu$ instead of $m$. This would be important if I was looking at three body interactions or two body orbits where the masses are comparable and the center of mass is outside of either body, but that won't be the case here. Be aware that it could cause trouble in the future and that this code will not be completely generic.
+# 
+# ### Lagrangian
+# 
+# Though trivial up to a certain point, it's worth refreshing myself on the construction of the problem from scratch.
+# 
+# $$
+# L = \frac{1}{2}m|\dot{\vec{r}}|^2 - U(r) \qquad U(r) = - \frac{km}{r} \\
+# \frac{1}{2}m|\dot{\vec{r}}|^2 = \frac{1}{2}m |\vec{v_x} + \vec{v_y}|^2 \\
+# x = r \cos \phi \qquad y = r \sin \phi \\
+# \dot x =  \dot r \cos \phi - \dot \phi r \sin \phi \qquad \dot y =  \dot r \sin \phi + \dot \phi r \cos \phi \\
+# \rightarrow L = \frac{1}{2}m(\dot r \cos \phi \hat x - \dot \phi r \sin \phi \hat x + \dot r \sin \phi \hat y + \dot \phi r \cos \phi \hat y)^2 - U(r)\\
+# = \frac{1}{2} (\dot \phi ^2 r ^2 + \dot r ^2 ) - U(r)
+# $$
+# 
+# Because the Lagrangian depends only on the radius, the angular momentum will be conserved. Putting these through the Euler-Lagrange equations,
+# 
+# $$
+# \frac{\partial}{\partial t} \frac{\partial L}{\partial \dot r} = \frac{\partial L}{\partial r} \qquad \frac{\partial}{\partial t} \frac{\partial L}{\partial \dot \phi} = \frac{\partial L}{\partial \phi} = 0 \\
+# m \ddot r = m r \dot \phi ^2 - \frac{\partial U(r)}{\partial r} \qquad \partial_t (\dot \phi m r^2) = 0 \\
+# \rightarrow \dot \phi = \frac{\mathcal{l}}{mr^2}
+# $$
 
-For an inverse square attractive potential, the energy takes the form
+# The $r$ equation gives us the force we could have derived from Newton's laws, and the $\phi$ equation shows us that the angular momentum is a symmetry of the system. Because of this, our orbits will be constrained to a 2D plane.
+# 
+# ## Effective potential
+# 
+# Putting these together yields the force equation
+# 
+# $$
+# F_r = \underbrace{\frac{l^2}{m r^3} - \frac{\partial U(r)}{\partial r}}_{U_\text{eff}}
+# $$
+# 
+# Calling the angular momentum piece an effective potential $U_\text{eff}$ is common, as is seeing the radial potental, the angular momentum term, and $U_\text{eff}$ all plotted together for demonstration. I'll do that below for an inverse square potential (I haven't used a specific form of the potential in the above, aside from constraining it to depend only on r!) with $k=1$.
 
-$$
-E = \frac{1}{2} m v^2 - \frac{km}{r} \qquad k \equiv GM
-$$
+# In[2]:
 
-In the reduced mass picture,
 
-$$
-r = |\vec{r_1} - \vec{r_2}| \qquad \frac{m_1 m_2}{m_1 + m_2} = \mu = m
-$$
-
-Since for most of the work in this notebook the larger planet's mass (i.e., the sun) is hidden in the coupling constant $k$, I won't make an effort to use $\mu$ instead of $m$. This would be important if I was looking at three body interactions or two body orbits where the masses are comparable and the center of mass is outside of either body, but that won't be the case here. Be aware that it could cause trouble in the future and that this code will not be completely generic.
-
-### Lagrangian
-
-Though trivial up to a certain point, it's worth refreshing myself on the construction of the problem from scratch.
-
-$$
-L = \frac{1}{2}m|\dot{\vec{r}}|^2 - U(r) \qquad U(r) = - \frac{km}{r} \\
-\frac{1}{2}m|\dot{\vec{r}}|^2 = \frac{1}{2}m |\vec{v_x} + \vec{v_y}|^2 \\
-x = r \cos \phi \qquad y = r \sin \phi \\
-\dot x =  \dot r \cos \phi - \dot \phi r \sin \phi \qquad \dot y =  \dot r \sin \phi + \dot \phi r \cos \phi \\
-\rightarrow L = \frac{1}{2}m(\dot r \cos \phi \hat x - \dot \phi r \sin \phi \hat x + \dot r \sin \phi \hat y + \dot \phi r \cos \phi \hat y)^2 - U(r)\\
-= \frac{1}{2} (\dot \phi ^2 r ^2 + \dot r ^2 ) - U(r)
-$$
-
-Because the Lagrangian depends only on the radius, the angular momentum will be conserved. Putting these through the Euler-Lagrange equations,
-
-$$
-\frac{\partial}{\partial t} \frac{\partial L}{\partial \dot r} = \frac{\partial L}{\partial r} \qquad \frac{\partial}{\partial t} \frac{\partial L}{\partial \dot \phi} = \frac{\partial L}{\partial \phi} = 0 \\
-m \ddot r = m r \dot \phi ^2 - \frac{\partial U(r)}{\partial r} \qquad \partial_t (\dot \phi m r^2) = 0 \\
-\rightarrow \dot \phi = \frac{\mathcal{l}}{mr^2}
-$$
-
-+++
-
-The $r$ equation gives us the force we could have derived from Newton's laws, and the $\phi$ equation shows us that the angular momentum is a symmetry of the system. Because of this, our orbits will be constrained to a 2D plane.
-
-## Effective potential
-
-Putting these together yields the force equation
-
-$$
-F_r = \underbrace{\frac{l^2}{m r^3} - \frac{\partial U(r)}{\partial r}}_{U_\text{eff}}
-$$
-
-Calling the angular momentum piece an effective potential $U_\text{eff}$ is common, as is seeing the radial potental, the angular momentum term, and $U_\text{eff}$ all plotted together for demonstration. I'll do that below for an inverse square potential (I haven't used a specific form of the potential in the above, aside from constraining it to depend only on r!) with $k=1$.
-
-```{code-cell} ipython3
 k = 24 / 100
 m = 1 / 100
 l = 1.3 / 100
@@ -106,141 +95,137 @@ plt.plot(rs, angular_term(rs), label=r"$l^2/2mr^2$")
 plt.plot(rs, U_effective(rs), label=r"$U_{eff}$")
 plt.legend()
 plt.tight_layout()
-```
-
-+++ {"slideshow": {"slide_type": "slide"}}
-
-It turns out it's a bit tough to find good parameters to demonstrate the potential curve. The green curve is the effective potential; bound orbits are when the energy of the orbiting body is in the concave region, below the region where it would scatter (unbound orbit).
-
-# 1D Central Potential Scattering
-
-The total energy is
-
-$$
-E = \frac{1}{2} m \dot r^2  + U_{\text{eff}} \\
-\frac{\partial r}{\partial t} = \sqrt{\frac{2}{m} \big( E - U_{\text{eff}} \big)} \\
-\int_0^t dt = \int_0^R \frac{dr}{\sqrt{\frac{2}{m} \big( E - U_{\text{eff}} \big)}}
-$$
-
-This is where the work stops being trivial, because these integrals are hard. The time as a function of the energy and radius is also a somewhat bogus thing to solve for. Inverting this equation does not look like a fun time. The trick (which makes things easier but not necessarily EASY) is to change coordinates as follows:
-
-$$
-\frac{\partial r}{\partial t} = \frac{\partial r}{\partial \phi}\frac{\partial \phi}{\partial t} =
-\frac{\partial r}{\partial \phi} \frac{\mathcal l}{mr^2}
-$$
-
-Then
-
-$$
-E = \frac{1}{2}\frac{\mathcal l^2}{mr^4} \bigg(\frac{\partial r}{\partial \phi}\bigg)^2 + U_{\text{eff}}
-$$
-
-$$
-\boxed{\int_{\phi_0}^\phi = \Delta \phi = \int_0^R \frac{dr}{r^2 \sqrt{\frac{2m}{\mathcal l^2} \big( E - U_{\text{eff}} \big)}}}
-$$
-
-+++ {"slideshow": {"slide_type": "slide"}}
-
-For the inverse square problem,
-
-$$
-\Delta \phi = \int_0^R \frac{dr}{r^2 \sqrt{\frac{2m}{\mathcal l^2} \big( E + \frac{k}{r} - \frac{\mathcal l^2}{2mr^2} \big)}} \\
-= \int_0^R \frac{dr}{r^2 \sqrt{\big(\frac{2mE}{l^2} + \frac{2mk}{l^2r} - \frac{1}{r^2} \big)}}\\
-= - \int \frac{du}{\sqrt{\big(\frac{2mE}{l^2} + \frac{2mk u}{l^2} - u \big)}}
-$$
-
-The last line comes from making the substitution $u=1/r$, $du = -1/r^2 dr$.
-
-## Elliptic integral gratis
-This is gross. I don't like it. I'm not good at these things. Here's the integral:
-
-$$
-\int \frac{dx}{\sqrt{\alpha + \beta x + \gamma x^2}} = \frac{1}{\sqrt{-\gamma}} \arccos \bigg( - \frac{\beta + 2 \gamma x}{\sqrt{\beta^2 - 4 \alpha \gamma}}\bigg)
-$$
-
-It looks like some completing the square action is going on, given the $\arccos$ argument in the denominator.
-
-Making the substitutions and using the integral from the table....
-
-$$
-alpha = \frac{2mE}{l^2} \qquad \beta = \frac{2mk}{l^2} \qquad \gamma = -1 \\
-\Delta \phi = \arccos\bigg(\frac{\frac{l^2 u}{2mk} - 1}{\sqrt{1 + \frac{2El^2}{mk^2}}}\bigg)\\
-$$
-
-Solving for $u$ and returning to $u = 1/r$,
-
-$$
-\boxed{\frac{1}{r} = \bigg(\frac{2mk}{l^2}\bigg)\bigg(1 + \sqrt{1 + \frac{2El^2}{mk^2}}\cos\Delta\phi \bigg)}
-$$
-Smart people realized that this is the equation for conic sections,
-
-$$
-\frac{1}{r} = C(1 + \epsilon \cos \Delta \phi ) \\
-C = \bigg(\frac{2mk}{l^2}\bigg) \qquad \epsilon = \sqrt{1 + \frac{2El^2}{mk^2}}
-$$
 
 
-* Physical insight to derive these damned equations #1:
+# It turns out it's a bit tough to find good parameters to demonstrate the potential curve. The green curve is the effective potential; bound orbits are when the energy of the orbiting body is in the concave region, below the region where it would scatter (unbound orbit).
+# 
+# # 1D Central Potential Scattering
+# 
+# The total energy is
+# 
+# $$
+# E = \frac{1}{2} m \dot r^2  + U_{\text{eff}} \\
+# \frac{\partial r}{\partial t} = \sqrt{\frac{2}{m} \big( E - U_{\text{eff}} \big)} \\
+# \int_0^t dt = \int_0^R \frac{dr}{\sqrt{\frac{2}{m} \big( E - U_{\text{eff}} \big)}}
+# $$
+# 
+# This is where the work stops being trivial, because these integrals are hard. The time as a function of the energy and radius is also a somewhat bogus thing to solve for. Inverting this equation does not look like a fun time. The trick (which makes things easier but not necessarily EASY) is to change coordinates as follows:
+# 
+# $$
+# \frac{\partial r}{\partial t} = \frac{\partial r}{\partial \phi}\frac{\partial \phi}{\partial t} =
+# \frac{\partial r}{\partial \phi} \frac{\mathcal l}{mr^2}
+# $$
+# 
+# Then
+# 
+# $$
+# E = \frac{1}{2}\frac{\mathcal l^2}{mr^4} \bigg(\frac{\partial r}{\partial \phi}\bigg)^2 + U_{\text{eff}}
+# $$
+# 
+# $$
+# \boxed{\int_{\phi_0}^\phi = \Delta \phi = \int_0^R \frac{dr}{r^2 \sqrt{\frac{2m}{\mathcal l^2} \big( E - U_{\text{eff}} \big)}}}
+# $$
 
-**At the farthest and nearest points, the velocity of the orbiting body is entirely tangential. At these points, the radial velocity is zero.**
+# For the inverse square problem,
+# 
+# $$
+# \Delta \phi = \int_0^R \frac{dr}{r^2 \sqrt{\frac{2m}{\mathcal l^2} \big( E + \frac{k}{r} - \frac{\mathcal l^2}{2mr^2} \big)}} \\
+# = \int_0^R \frac{dr}{r^2 \sqrt{\big(\frac{2mE}{l^2} + \frac{2mk}{l^2r} - \frac{1}{r^2} \big)}}\\
+# = - \int \frac{du}{\sqrt{\big(\frac{2mE}{l^2} + \frac{2mk u}{l^2} - u \big)}}
+# $$
+# 
+# The last line comes from making the substitution $u=1/r$, $du = -1/r^2 dr$.
+# 
+# ## Elliptic integral gratis
+# This is gross. I don't like it. I'm not good at these things. Here's the integral:
+# 
+# $$
+# \int \frac{dx}{\sqrt{\alpha + \beta x + \gamma x^2}} = \frac{1}{\sqrt{-\gamma}} \arccos \bigg( - \frac{\beta + 2 \gamma x}{\sqrt{\beta^2 - 4 \alpha \gamma}}\bigg)
+# $$
+# 
+# It looks like some completing the square action is going on, given the $\arccos$ argument in the denominator.
+# 
+# Making the substitutions and using the integral from the table....
+# 
+# $$
+# alpha = \frac{2mE}{l^2} \qquad \beta = \frac{2mk}{l^2} \qquad \gamma = -1 \\
+# \Delta \phi = \arccos\bigg(\frac{\frac{l^2 u}{2mk} - 1}{\sqrt{1 + \frac{2El^2}{mk^2}}}\bigg)\\
+# $$
+# 
+# Solving for $u$ and returning to $u = 1/r$,
+# 
+# $$
+# \boxed{\frac{1}{r} = \bigg(\frac{2mk}{l^2}\bigg)\bigg(1 + \sqrt{1 + \frac{2El^2}{mk^2}}\cos\Delta\phi \bigg)}
+# $$
+# Smart people realized that this is the equation for conic sections,
+# 
+# $$
+# \frac{1}{r} = C(1 + \epsilon \cos \Delta \phi ) \\
+# C = \bigg(\frac{2mk}{l^2}\bigg) \qquad \epsilon = \sqrt{1 + \frac{2El^2}{mk^2}}
+# $$
+# 
+# 
+# * Physical insight to derive these damned equations #1:
+# 
+# **At the farthest and nearest points, the velocity of the orbiting body is entirely tangential. At these points, the radial velocity is zero.**
+# 
+# $$
+# E = \frac{-k}{r} + \frac{l^2}{2mr^2} \\
+# E + \frac{k}{r} - \frac{l^2}{2mr^2} = 0 \\
+# \rightarrow r = \frac{-k \pm \sqrt{k^2 + \frac{2El^2}{m}}}{2E}
+# $$
+#     
+# Using the definition of$\epsilon$ this is
+#     
+# $$
+# r = (1 \pm \epsilon) \qquad a \equiv \frac{k}{2E}\\
+# r_a = a(1+\epsilon) \qquad r_p = a(1-\epsilon)
+# $$
+#     
+#     $r_a$ is the radius of the orbit at apoapsis, and $r_b$ is the radius of the orbit at periapsis (when discussing orbits around our sun, these terms take on the more specific *perihelion* and *aphelion*). $a$ is the semimajor axis. Note that $r_a + r_p = 2a$.
+# 
+# ---
+# 
+# There's one more thing that I need to get reasonable simulations for the objects in our solar system. Somehow I need to estimate the initial velocity. The easiest way I could figure is when the velocity is entirely in the tangential direction, at one of the apsides. In these cases we don't need to guess, we can calculate.
+# 
+# [a picture you've drawn out of the system would be nice here.]
+# 
+# If $b$ is the semiminor axis, we can relate the angular momentum (conserved!) at any point with that at b.
+# 
+# $$
+# l_1 = l_2 \qquad m v_1 r_1 = m v_2 r_2 = m b v_2
+# $$
+# 
+# The mass drops out, and the relationship is an easy one. Combine this with conservation of energy between the two points:
+# 
+# $$
+# \frac{1}{2} v_1 ^2 - \frac{k}{r_1} = \frac{1}{2} v_2 ^2 - \frac{k}{b}
+# $$
+# 
+# Two things of use:
+# $$
+# r_{\text{apsis}} = a(1\pm \epsilon) \qquad b = \sqrt{r_a r_b} \rightarrow b = a\sqrt{1-\epsilon^2}
+# $$
+# 
+# By combining the above equations and doing a few pages of dumb messy algebra (I did it, it works!) the velocities are
+# 
+# $$
+# v_a = \sqrt{
+#             \frac{k}{a} \frac{(1-\epsilon)}{(1+\epsilon)}
+#             }
+#       \qquad
+# v_p = \sqrt{
+#             \frac{k}{a} \frac{(1+\epsilon)}{(1-\epsilon)}
+#             }
+# $$
 
-$$
-E = \frac{-k}{r} + \frac{l^2}{2mr^2} \\
-E + \frac{k}{r} - \frac{l^2}{2mr^2} = 0 \\
-\rightarrow r = \frac{-k \pm \sqrt{k^2 + \frac{2El^2}{m}}}{2E}
-$$
-    
-Using the definition of$\epsilon$ this is
-    
-$$
-r = (1 \pm \epsilon) \qquad a \equiv \frac{k}{2E}\\
-r_a = a(1+\epsilon) \qquad r_p = a(1-\epsilon)
-$$
-    
-    $r_a$ is the radius of the orbit at apoapsis, and $r_b$ is the radius of the orbit at periapsis (when discussing orbits around our sun, these terms take on the more specific *perihelion* and *aphelion*). $a$ is the semimajor axis. Note that $r_a + r_p = 2a$.
+# # Gravitational Orbits Code
+# 
+# Using the above equations, everything necessary to start simulating orbits is done. There are other things to discuss, but this has been enough equations for now. Let's break it up with the main code for the orbital routine.
 
----
+# In[3]:
 
-There's one more thing that I need to get reasonable simulations for the objects in our solar system. Somehow I need to estimate the initial velocity. The easiest way I could figure is when the velocity is entirely in the tangential direction, at one of the apsides. In these cases we don't need to guess, we can calculate.
 
-[a picture you've drawn out of the system would be nice here.]
-
-If $b$ is the semiminor axis, we can relate the angular momentum (conserved!) at any point with that at b.
-
-$$
-l_1 = l_2 \qquad m v_1 r_1 = m v_2 r_2 = m b v_2
-$$
-
-The mass drops out, and the relationship is an easy one. Combine this with conservation of energy between the two points:
-
-$$
-\frac{1}{2} v_1 ^2 - \frac{k}{r_1} = \frac{1}{2} v_2 ^2 - \frac{k}{b}
-$$
-
-Two things of use:
-$$
-r_{\text{apsis}} = a(1\pm \epsilon) \qquad b = \sqrt{r_a r_b} \rightarrow b = a\sqrt{1-\epsilon^2}
-$$
-
-By combining the above equations and doing a few pages of dumb messy algebra (I did it, it works!) the velocities are
-
-$$
-v_a = \sqrt{
-            \frac{k}{a} \frac{(1-\epsilon)}{(1+\epsilon)}
-            }
-      \qquad
-v_p = \sqrt{
-            \frac{k}{a} \frac{(1+\epsilon)}{(1-\epsilon)}
-            }
-$$
-
-+++ {"slideshow": {"slide_type": "slide"}}
-
-# Gravitational Orbits Code
-
-Using the above equations, everything necessary to start simulating orbits is done. There are other things to discuss, but this has been enough equations for now. Let's break it up with the main code for the orbital routine.
-
-```{code-cell} ipython3
 class Orbits:
     """Class solving for the trajectories of central potential orbits."""
 
@@ -355,15 +340,15 @@ class Orbits:
 
         # return E.ravel()
         return np.array([E, KE])[:, :, -1]
-```
 
-This gives us most of the necessary tools to simulate orbits for a general exponent $\beta$ in a $k / r^{\beta}$ force law. To be clear, in our universe (as far as we know), this exponent is $\beta = 2$. We need planetary data, which is provided below. The attributes specific to the planet of interest get pulled into the `Orbits` class when properly applied.
 
-+++
+# This gives us most of the necessary tools to simulate orbits for a general exponent $\beta$ in a $k / r^{\beta}$ force law. To be clear, in our universe (as far as we know), this exponent is $\beta = 2$. We need planetary data, which is provided below. The attributes specific to the planet of interest get pulled into the `Orbits` class when properly applied.
 
-## Define celestial objects
+# ## Define celestial objects
 
-```{code-cell} ipython3
+# In[4]:
+
+
 class Planet(object):
     """Example class for Planet objects."""
 
@@ -450,35 +435,35 @@ class Earth(Planet):
 
         self.x0 = self.perihelion + 0j
         self.v0 = self.velocity_at_perihelion()
-```
 
-We don't really need the planet's mass for the problems in this notebook, since the sun is so massive that their total mass is effectively the sun's mass and the center of mass is deep inside that star.
 
-## units
+# We don't really need the planet's mass for the problems in this notebook, since the sun is so massive that their total mass is effectively the sun's mass and the center of mass is deep inside that star.
+# 
+# ## units
+# 
+# Let's talk about units.
+# 
+# The orders of magnitude in astronomical work are too spread to be smart for computational work with numbers stored in floats and whatnot. $10^{27}\text{kg}$ doesn't play well with the gravitational constant $G = 6.673 \times 10^{-11}\text{N/kg m}^2$. For problems dealing with our solar system, timescales of orbits can be described between months and hundreds of years, so measuring time in years is safe. We can also measure distance in astronomical units - Pluto is only 39 AU from the sun on average, so we can comfortably go to 100 AU and not push the limits of too many decades in magnitude.
+# 
+# The velocity of a circular orbit is given by Newton's equations:
+# 
+# $$
+# \frac{m v^2}{r} = F_r = \frac{GMm}{r^2} \\
+# v^2 r = GM
+# $$
+# 
+# The Earth's orbit is roughly circular, and it orbits $2\pi \times 1AU$ every year.
+# 
+# $$
+# 4 \pi^2 \frac{\text{AU}^2}{1 \text{yr}^2} \times 1 \text{AU} = GM \\
+# GM = 4 \pi^2 \frac{\text{AU}^3}{\text{yr}^2} \equiv k
+# $$
 
-Let's talk about units.
+# ## Earth
 
-The orders of magnitude in astronomical work are too spread to be smart for computational work with numbers stored in floats and whatnot. $10^{27}\text{kg}$ doesn't play well with the gravitational constant $G = 6.673 \times 10^{-11}\text{N/kg m}^2$. For problems dealing with our solar system, timescales of orbits can be described between months and hundreds of years, so measuring time in years is safe. We can also measure distance in astronomical units - Pluto is only 39 AU from the sun on average, so we can comfortably go to 100 AU and not push the limits of too many decades in magnitude.
+# In[5]:
 
-The velocity of a circular orbit is given by Newton's equations:
 
-$$
-\frac{m v^2}{r} = F_r = \frac{GMm}{r^2} \\
-v^2 r = GM
-$$
-
-The Earth's orbit is roughly circular, and it orbits $2\pi \times 1AU$ every year.
-
-$$
-4 \pi^2 \frac{\text{AU}^2}{1 \text{yr}^2} \times 1 \text{AU} = GM \\
-GM = 4 \pi^2 \frac{\text{AU}^3}{\text{yr}^2} \equiv k
-$$
-
-+++
-
-## Earth
-
-```{code-cell} ipython3
 MyPlanet = Earth
 
 c = Orbits(planet=MyPlanet, dt=0.0001, Tmax=1.5 * getattr(MyPlanet(), "period"))
@@ -503,12 +488,14 @@ for i in range(len(c.data[::frames])):
 
     display(fig)
     clear_output(wait=True)
-```
 
-## Halley's Comet
-We can check this for Halley's Comet for a more complicated example. The period should be about 76 years.
 
-```{code-cell} ipython3
+# ## Halley's Comet
+# We can check this for Halley's Comet for a more complicated example. The period should be about 76 years.
+
+# In[6]:
+
+
 MyPlanet = HalleysComet
 
 c = Orbits(planet=MyPlanet, dt=0.01, Tmax=1.5 * getattr(MyPlanet(), "period"))
@@ -533,13 +520,15 @@ for i in range(len(c.data[::frames])):
 
     display(fig)
     clear_output(wait=True)
-```
 
-# Mercury
 
-Here I'll take a look at Mercury, which has a noticeable eccentricity, though less extreme than Halley's Comet. In the real world, this orbit precesses, but in simulation it will not. Why the difference?
+# # Mercury
+# 
+# Here I'll take a look at Mercury, which has a noticeable eccentricity, though less extreme than Halley's Comet. In the real world, this orbit precesses, but in simulation it will not. Why the difference?
 
-```{code-cell} ipython3
+# In[7]:
+
+
 MyPlanet = Mercury
 
 c = Orbits(planet=MyPlanet, dt=0.0001, Tmax=1.5 * getattr(MyPlanet(), "period"))
@@ -564,12 +553,14 @@ for i in range(len(c.data[::frames])):
 
     display(fig)
     clear_output(wait=True)
-```
 
-## Deviation from $1/r^2$
-In our universe, there are more gravitating bodies than just the sun and Mercury. The contributions to the gravitational force from these other bodies act as a perturbation on Mercury's orbit and cause it to precess. One way of roughly modelling this is by slightly deviating from the $1/r^2$ force.
 
-```{code-cell} ipython3
+# ## Deviation from $1/r^2$
+# In our universe, there are more gravitating bodies than just the sun and Mercury. The contributions to the gravitational force from these other bodies act as a perturbation on Mercury's orbit and cause it to precess. One way of roughly modelling this is by slightly deviating from the $1/r^2$ force.
+
+# In[8]:
+
+
 MyPlanet = Mercury
 
 c = Orbits(
@@ -596,13 +587,15 @@ for i in range(len(c.data[::frames])):
 
     display(fig)
     clear_output(wait=True)
-```
 
-# P.S. - Matplotlib AnimateFunc
-The animated plots above look a lot nicer outside of Jupyter notebooks, when using Matplotlib's `AnimateFunc`. Try running one through a terminal!
 
-```{code-cell} ipython3
-%matplotlib notebook
+# # P.S. - Matplotlib AnimateFunc
+# The animated plots above look a lot nicer outside of Jupyter notebooks, when using Matplotlib's `AnimateFunc`. Try running one through a terminal!
+
+# In[9]:
+
+
+get_ipython().run_line_magic('matplotlib', 'notebook')
 
 MyPlanet = HalleysComet
 c = Orbits(planet=MyPlanet, dt=0.1, Tmax=10 * getattr(MyPlanet(), "period"))
@@ -642,10 +635,12 @@ def animate(i):
 anim = animation.FuncAnimation(
     fig, animate, init_func=init, frames=len(c.ts), interval=1, blit=True
 )
-```
 
-Note that these `Matplotlib.FuncAnimation` plots work much better outside of Jupyter notebooks.
 
-```{code-cell} ipython3
+# Note that these `Matplotlib.FuncAnimation` plots work much better outside of Jupyter notebooks.
 
-```
+# In[ ]:
+
+
+
+

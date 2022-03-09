@@ -1,19 +1,18 @@
 ---
-jupyter:
-  jupytext:
-    formats: ipynb,md
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.13.7
-  kernelspec:
-    display_name: Python 3 (kepler)
-    language: python
-    name: kepler
+jupytext:
+  formats: ipynb,md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.13.7
+kernelspec:
+  display_name: Python 3 (kepler)
+  language: python
+  name: kepler
 ---
 
-```python
+```{code-cell} ipython3
 import warnings
 
 import numpy as np
@@ -22,12 +21,11 @@ from scipy.optimize import curve_fit
 
 from matplotlib import pyplot as plt
 from matplotlib import animation
-
 ```
 
 # Simple Keplerian Orbits
 
-
++++
 
 ## Equations of motion
 
@@ -66,6 +64,7 @@ m \ddot r = m r \dot \phi ^2 - \frac{\partial U(r)}{\partial r} \qquad \partial_
 \rightarrow \dot \phi = \frac{\mathcal{l}}{mr^2}
 $$
 
++++
 
 The $r$ equation gives us the force we could have derived from Newton's laws, and the $\phi$ equation shows us that the angular momentum is a symmetry of the system. Because of this, our orbits will be constrained to a 2D plane.
 
@@ -79,7 +78,7 @@ $$
 
 Calling the angular momentum piece an effective potential $U_\text{eff}$ is common, as is seeing the radial potental, the angular momentum term, and $U_\text{eff}$ all plotted together for demonstration. I'll do that below for an inverse square potential (I haven't used a specific form of the potential in the above, aside from constraining it to depend only on r!) with $k=1$.
 
-```python
+```{code-cell} ipython3
 k = 24 / 100
 m = 1 / 100
 l = 1.3 / 100
@@ -109,8 +108,8 @@ plt.legend()
 plt.tight_layout()
 ```
 
++++ {"slideshow": {"slide_type": "slide"}}
 
-<!-- #region slideshow={"slide_type": "slide"} -->
 It turns out it's a bit tough to find good parameters to demonstrate the potential curve. The green curve is the effective potential; bound orbits are when the energy of the orbiting body is in the concave region, below the region where it would scatter (unbound orbit).
 
 # 1D Central Potential Scattering
@@ -139,9 +138,9 @@ $$
 $$
 \boxed{\int_{\phi_0}^\phi = \Delta \phi = \int_0^R \frac{dr}{r^2 \sqrt{\frac{2m}{\mathcal l^2} \big( E - U_{\text{eff}} \big)}}}
 $$
-<!-- #endregion -->
 
-<!-- #region slideshow={"slide_type": "slide"} -->
++++ {"slideshow": {"slide_type": "slide"}}
+
 For the inverse square problem,
 
 $$
@@ -234,16 +233,14 @@ v_p = \sqrt{
             \frac{k}{a} \frac{(1+\epsilon)}{(1-\epsilon)}
             }
 $$
-<!-- #endregion -->
 
-<!-- #region slideshow={"slide_type": "slide"} -->
++++ {"slideshow": {"slide_type": "slide"}}
+
 # Gravitational Orbits Code
 
 Using the above equations, everything necessary to start simulating orbits is done. There are other things to discuss, but this has been enough equations for now. Let's break it up with the main code for the orbital routine.
-<!-- #endregion -->
 
-
-```python
+```{code-cell} ipython3
 class Orbits:
     """Class solving for the trajectories of central potential orbits."""
 
@@ -362,10 +359,11 @@ class Orbits:
 
 This gives us most of the necessary tools to simulate orbits for a general exponent $\beta$ in a $k / r^{\beta}$ force law. To be clear, in our universe (as far as we know), this exponent is $\beta = 2$. We need planetary data, which is provided below. The attributes specific to the planet of interest get pulled into the `Orbits` class when properly applied.
 
++++
 
 ## Define celestial objects
 
-```python
+```{code-cell} ipython3
 class Planet(object):
     """Example class for Planet objects."""
 
@@ -476,10 +474,11 @@ $$
 GM = 4 \pi^2 \frac{\text{AU}^3}{\text{yr}^2} \equiv k
 $$
 
++++
 
 ## Earth
 
-```python
+```{code-cell} ipython3
 MyPlanet = Earth
 
 c = Orbits(planet=MyPlanet, dt=0.0001, Tmax=1.5 * getattr(MyPlanet(), "period"))
@@ -509,7 +508,7 @@ for i in range(len(c.data[::frames])):
 ## Halley's Comet
 We can check this for Halley's Comet for a more complicated example. The period should be about 76 years.
 
-```python
+```{code-cell} ipython3
 MyPlanet = HalleysComet
 
 c = Orbits(planet=MyPlanet, dt=0.01, Tmax=1.5 * getattr(MyPlanet(), "period"))
@@ -540,7 +539,7 @@ for i in range(len(c.data[::frames])):
 
 Here I'll take a look at Mercury, which has a noticeable eccentricity, though less extreme than Halley's Comet. In the real world, this orbit precesses, but in simulation it will not. Why the difference?
 
-```python
+```{code-cell} ipython3
 MyPlanet = Mercury
 
 c = Orbits(planet=MyPlanet, dt=0.0001, Tmax=1.5 * getattr(MyPlanet(), "period"))
@@ -570,7 +569,7 @@ for i in range(len(c.data[::frames])):
 ## Deviation from $1/r^2$
 In our universe, there are more gravitating bodies than just the sun and Mercury. The contributions to the gravitational force from these other bodies act as a perturbation on Mercury's orbit and cause it to precess. One way of roughly modelling this is by slightly deviating from the $1/r^2$ force.
 
-```python
+```{code-cell} ipython3
 MyPlanet = Mercury
 
 c = Orbits(
@@ -602,7 +601,7 @@ for i in range(len(c.data[::frames])):
 # P.S. - Matplotlib AnimateFunc
 The animated plots above look a lot nicer outside of Jupyter notebooks, when using Matplotlib's `AnimateFunc`. Try running one through a terminal!
 
-```python
+```{code-cell} ipython3
 %matplotlib notebook
 
 MyPlanet = HalleysComet
@@ -643,11 +642,10 @@ def animate(i):
 anim = animation.FuncAnimation(
     fig, animate, init_func=init, frames=len(c.ts), interval=1, blit=True
 )
-
 ```
 
 Note that these `Matplotlib.FuncAnimation` plots work much better outside of Jupyter notebooks.
 
-```python
+```{code-cell} ipython3
 
 ```
