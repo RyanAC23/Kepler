@@ -1,6 +1,6 @@
-# Kepler
+# Keplerian Orbits
 
-[Basic Orbits GitHub Website](https://ryanac23.github.io/Kepler/Docs/_build/html/index.html)
+# [Basic Orbits GitHub Website](https://ryanac23.github.io/Kepler/Docs/_build/html/index.html)
 
 Python project implementing simple models of Keplerian orbits.
 
