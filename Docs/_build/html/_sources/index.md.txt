@@ -11,7 +11,7 @@ Kid Charlemagne is on the Case
 maxdepth: 2
 caption: "Contents:"
 ---
-Orbits
+Notebooks
 ```
 
 ```{include} readme.md
