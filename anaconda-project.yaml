@@ -151,3 +151,5 @@ env_specs:
 # See https://github.com/Anaconda-Platform/anaconda-project/issues/263#issuecomment-870004641
 skip_imports:
   notebooks: true
+packages:
+- myst-nb

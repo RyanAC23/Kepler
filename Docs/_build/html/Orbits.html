@@ -5,17 +5,30 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Notebooks &#8212; kepler 0 documentation</title>
+    <title>Notebooks &#8212; kepler</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/traditional.css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script>
+$(document).ready(function() {
+  $('.interface').addClass('class');
+});
+</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Equations of motion" href="Orbits/Keplerian%20Orbits.html" />
-    <link rel="prev" title="Title Page I am NOT the Zodiac Killer" href="index.html" /> 
+    <link rel="next" title="Simple Keplerian Orbits" href="Orbits/keplerian_orbits.html" />
+    <link rel="prev" title="Kid Charlemagne is on the case" href="index.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -24,12 +37,12 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="Orbits/Keplerian%20Orbits.html" title="Equations of motion"
+          <a href="Orbits/keplerian_orbits.html" title="Simple Keplerian Orbits"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Title Page I am NOT the Zodiac Killer"
+          <a href="index.html" title="Kid Charlemagne is on the case"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">kepler 0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">kepler</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Notebooks</a></li> 
       </ul>
     </div>  
@@ -44,14 +57,13 @@
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Orbits/Keplerian%20Orbits.html">Equations of motion</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Orbits/Keplerian%20Orbits.html#effective-potential">Effective potential</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Orbits/Keplerian%20Orbits.html#d-central-potential-scattering">1D Central Potential Scattering</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Orbits/Keplerian%20Orbits.html#gravitational-orbits-code">Gravitational Orbits Code</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Orbits/Keplerian%20Orbits.html#mercury">Mercury</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Orbits/Keplerian%20Orbits.html#p-s-matplotlib-animatefunc">P.S. - Matplotlib AnimateFunc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Orbits/Perihelion%20shift%20of%20Mercury.html">Mercury</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Orbits/Perihelion%20shift%20of%20Mercury.html#measuring-the-perihelion-shift">Measuring the perihelion shift</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Orbits/keplerian_orbits.html">Simple Keplerian Orbits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Orbits/keplerian_orbits.html#d-central-potential-scattering">1D Central Potential Scattering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Orbits/keplerian_orbits.html#gravitational-orbits-code">Gravitational Orbits Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Orbits/keplerian_orbits.html#mercury">Mercury</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Orbits/keplerian_orbits.html#p-s-matplotlib-animatefunc">P.S. - Matplotlib AnimateFunc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Orbits/perihelion_shift_mercury.html">Mercury</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Orbits/perihelion_shift_mercury.html#measuring-the-perihelion-shift">Measuring the perihelion shift</a></li>
 </ul>
 </div>
 </div>
@@ -66,12 +78,12 @@
   <div>
     <h4>Previous topic</h4>
     <p class="topless"><a href="index.html"
-                          title="previous chapter">Title Page I am <em>NOT</em> the Zodiac Killer</a></p>
+                          title="previous chapter">Kid Charlemagne is on the case</a></p>
   </div>
   <div>
     <h4>Next topic</h4>
-    <p class="topless"><a href="Orbits/Keplerian%20Orbits.html"
-                          title="next chapter">Equations of motion</a></p>
+    <p class="topless"><a href="Orbits/keplerian_orbits.html"
+                          title="next chapter">Simple Keplerian Orbits</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -101,12 +113,12 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="Orbits/Keplerian%20Orbits.html" title="Equations of motion"
+          <a href="Orbits/keplerian_orbits.html" title="Simple Keplerian Orbits"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Title Page I am NOT the Zodiac Killer"
+          <a href="index.html" title="Kid Charlemagne is on the case"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">kepler 0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">kepler</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Notebooks</a></li> 
       </ul>
     </div>
