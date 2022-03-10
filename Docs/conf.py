@@ -109,6 +109,8 @@ html_title = project
 
 templates_path = ["_templates"]
 html_theme = "traditional"
+# html_theme = "sphinx_book_theme"  # Theme for JupyterBook
+
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

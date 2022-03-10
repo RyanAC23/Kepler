@@ -1,4 +1,7 @@
 """Module containing our Solar System's planets and some of their parameters."""
+import mmf_setup
+
+mmf_setup.set_path()
 
 import numpy as np
 
@@ -14,6 +17,29 @@ __all__ = [
     "Pluto",
     "HalleysComet",
 ]
+
+import os
+
+
+def get_planet_dict():
+    planet_data_dict = {}
+    abs_path = os.path.dirname(__file__)
+    file_path = abs_path + "/planets.csv"
+
+    with open(file_path, "r") as data_file:
+        row1 = data_file.readline()
+        row1 = row1.strip().split(",")[1:]  # throw away first label
+        for row in data_file:
+            row = row.strip().split(",")
+            for cols in range(len(row1)):
+                physical_parameter = row1[cols]
+                # print(physical_parameter)
+                # planetary_data.setdefault(row[0],{})[physical_parameter] = float(row[cols])
+                # print(row[0], physical_parameter, row[cols+1])
+                planet_data_dict.setdefault(row[0], {})[physical_parameter] = float(
+                    row[cols + 1]
+                )
+    return planet_data_dict
 
 
 class Planet(object):
@@ -96,7 +122,7 @@ class Venus(Planet):
         """Physical parameters measured in AU and years."""
         self.mass = None
         self.semimajor = 0.72  # AU
-        self.eccentricity = 0.007
+        self.eccentricity = 0.0067
         self.period = 224.7 / 365.26  # years
         self.perihelion = self.semimajor * (1 - self.eccentricity)
 
@@ -186,7 +212,7 @@ class Neptune(Planet):
         """Physical parameters measured in AU and years."""
         self.mass = None
         self.semimajor = 30.06  # AU
-        self.eccentricity = 0.010
+        self.eccentricity = 0.0113
         self.period = 164.79  # years
         self.perihelion = self.semimajor * (1 - self.eccentricity)
 
