@@ -64,7 +64,7 @@ reallyclean:
 
 
 test:
-	$(ANACONDA_PROJECT) run test
+	pytest --cov-config=.coveragerc tests/
 
 doc-server:
 	sphinx-autobuild --ignore Docs/_build Docs Docs/_build/html
