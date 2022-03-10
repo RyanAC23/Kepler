@@ -2,9 +2,9 @@
 
 # [Basic Orbits GitHub Website](https://ryanac23.github.io/Kepler/Docs/_build/html/index.html)
 
-Python project implementing simple models of Keplerian orbits.
+Simple implementation of `scipy.solve_ivp` to integrate classical nonrelativistic orbits of solar system planets around the sun. A discussion of the equations of motion is included. At the end, I've worked through an extrapolation problem for computing the perihelion shift of Mercury, which works to a low accuracy.
 
-Check out the site and tell me what I should do with it!
+Examples of the code and how it works are contained in the documentation. The coordinates of the problem are represented by complex numbers, where `x` and `y` are typically represented by `z.real` and `z.imag`, respectively.
 
 ### ----- Useful Links -----------------------------------------------------
 
