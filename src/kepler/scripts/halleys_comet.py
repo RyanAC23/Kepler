@@ -10,21 +10,6 @@ mmf_setup.set_path()
 from evolvers.ivp_evolvers import Orbits
 from kepler.planets import HalleysComet
 
-# -------------------------------------------
-# ----- Main --------------------------------
-# -------------------------------------------
-
-if __name__ == "__main__":
-    main()
-
-
-def main():
-    anim = animation.FuncAnimation(
-        fig, animate, init_func=init, frames=len(c.ts), interval=1, blit=True
-    )
-
-    plt.show()
-
 
 # -------------------------------------------
 # ----- Body --------------------------------
@@ -66,3 +51,20 @@ def animate(i):
         + f"KE={c.KEs[i]:.2f}\nPE={(c.Es[i]-c.KEs[i]):.2f}"
     )
     return (line, points, label)
+
+
+# -------------------------------------------
+# ----- Main --------------------------------
+# -------------------------------------------
+
+
+def main():
+    anim = animation.FuncAnimation(
+        fig, animate, init_func=init, frames=len(c.ts), interval=1, blit=True
+    )
+
+    plt.show()
+
+
+if __name__ == "__main__":
+    main()
