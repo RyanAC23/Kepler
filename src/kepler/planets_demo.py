@@ -11,8 +11,26 @@ from evolvers.ivp_evolvers import Orbits
 from kepler.planets import *
 from kepler.planets import Planet
 
-# ----- Class Call --------------------------
+# -------------------------------------------
+# ----- Main --------------------------------
+# -------------------------------------------
 
+if __name__ == "__main__":
+    main()
+
+
+def main():
+
+    anim = animation.FuncAnimation(
+        fig, animate, init_func=init, frames=len(c.ts), interval=1, blit=True
+    )
+
+    plt.show()
+
+
+# -------------------------------------------
+# ----- Class Call --------------------------
+# -------------------------------------------
 
 MyPlanet = Mercury
 c = Orbits(
@@ -20,7 +38,9 @@ c = Orbits(
 )
 print(abs(c.data).max(), abs(c.data).min())
 
-# --- static plot ----------------------------
+# -------------------------------------------
+# --- static plot ---------------------------
+# -------------------------------------------
 
 static_plot = True
 if static_plot:
@@ -33,7 +53,9 @@ if static_plot:
 
     plt.show()
 
-# --- animated plot --------------------------
+# -------------------------------------------
+# --- animated plot -------------------------
+# -------------------------------------------
 
 Lmax = c.x0.real * 1.6
 
@@ -71,10 +93,3 @@ def animate(i):
         + f"KE={c.KEs[i]:.2f}\nPE={(c.Es[i]-c.KEs[i]):.2f}"
     )
     return (line, points, label)
-
-
-anim = animation.FuncAnimation(
-    fig, animate, init_func=init, frames=len(c.ts), interval=1, blit=True
-)
-
-plt.show()

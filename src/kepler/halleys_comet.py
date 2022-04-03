@@ -10,6 +10,26 @@ mmf_setup.set_path()
 from evolvers.ivp_evolvers import Orbits
 from kepler.planets import HalleysComet
 
+# -------------------------------------------
+# ----- Main --------------------------------
+# -------------------------------------------
+
+if __name__ == "__main__":
+    main()
+
+
+def main():
+    anim = animation.FuncAnimation(
+        fig, animate, init_func=init, frames=len(c.ts), interval=1, blit=True
+    )
+
+    plt.show()
+
+
+# -------------------------------------------
+# ----- Body --------------------------------
+# -------------------------------------------
+
 
 MyPlanet = HalleysComet
 c = Orbits(planet=MyPlanet, dt=0.1, Tmax=3 * getattr(MyPlanet(), "period"))
@@ -46,10 +66,3 @@ def animate(i):
         + f"KE={c.KEs[i]:.2f}\nPE={(c.Es[i]-c.KEs[i]):.2f}"
     )
     return (line, points, label)
-
-
-anim = animation.FuncAnimation(
-    fig, animate, init_func=init, frames=len(c.ts), interval=1, blit=True
-)
-
-plt.show()

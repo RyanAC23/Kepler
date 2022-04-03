@@ -58,8 +58,6 @@ class RelativisticCorrection(Orbits):
 
 # ----- Calculate the precesssion -----
 
-precession_rates = []
-
 
 def func(t, a, b):
     return a * t + b
@@ -86,20 +84,34 @@ def get_precession_rate(MyPlanet, dt, Tmax, alpha):
     return popt[0]
 
 
-for i in range(len(alphas)):
-    _current_rate = get_precession_rate(MyPlanet, dt, Tmax, alphas[i]) * 180 / np.pi
-    precession_rates.append(_current_rate)
-    print(f"alpha {i:2d}: {alphas[i]:.2e} AU^2\trate: {_current_rate:.5f} deg/year")
+# -------------------------------------------
+# ----- Main --------------------------------
+# -------------------------------------------
 
 
-popt_final, pcov_final = curve_fit(
-    func, alphas, precession_rates, bounds=((-np.inf, 0), (np.inf, eps))
-)
+def main():
+    precession_rates = []
 
-_alphas = np.array(alphas)
+    for _i, _alphas in enumerate(alphas):
+        _current_rate = get_precession_rate(MyPlanet, dt, Tmax, _alphas) * 180 / np.pi
+        precession_rates.append(_current_rate)
+        print(f"alpha {_i:2d}: {_alphas:.2e} AU^2\trate: {_current_rate:.5f} deg/year")
 
-mercury_alpha = 1.1e-8  # AU^2
-mercury_precession_rate = (
-    func(mercury_alpha, popt_final[0], 0) * 3600 * 100
-)  # arcseconds / century
-print(f"Mercury's Precession Rate : {mercury_precession_rate:.2f} arcseconds / century")
+    popt_final, pcov_final = curve_fit(
+        func, alphas, precession_rates, bounds=((-np.inf, 0), (np.inf, eps))
+    )
+
+    _alphas = np.array(alphas)
+
+    mercury_alpha = 1.1e-8  # AU^2
+    mercury_precession_rate = (
+        func(mercury_alpha, popt_final[0], 0) * 3600 * 100
+    )  # arcseconds / century
+
+    print(
+        f"Mercury's Precession Rate : {mercury_precession_rate:.2f} arcseconds / century"
+    )
+
+
+if __name__ == "__main__":
+    main()
